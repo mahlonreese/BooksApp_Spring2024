@@ -92,12 +92,29 @@ namespace BooksApp_Spring2024.Areas.Admin.Controllers
         }
 
 
-        //httpGet
+        [HttpGet]
         public IActionResult Edit(int id)//will allow the user to edit a category
         {
-            Book bookObj = _dbContext.Books.Find(id);
+            var book = _dbContext.Books.Find(id);
 
-            return View(bookObj);
+            IEnumerable<SelectListItem> listOfCategories = _dbContext.Categories.ToList().Select(o =>
+            new SelectListItem
+            {
+                Text = o.Name,
+                Value = o.CategoryID.ToString()
+
+                //known as transformation OR projection
+            });
+
+
+            BookWithCategoriesVM bookWithCategoriesVM = new BookWithCategoriesVM();
+
+            bookWithCategoriesVM.Book = book;
+
+            bookWithCategoriesVM.ListOfCategories = listOfCategories;
+
+
+            return View(book);
         }
 
         [HttpPost]
