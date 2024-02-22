@@ -114,7 +114,7 @@ namespace BooksApp_Spring2024.Areas.Admin.Controllers
             bookWithCategoriesVM.ListOfCategories = listOfCategories;
 
 
-            return View(book);
+            return View(bookWithCategoriesVM);
         }
 
         [HttpPost]
@@ -127,7 +127,7 @@ namespace BooksApp_Spring2024.Areas.Admin.Controllers
             {
                 if(imgFile != null)
                 {
-                    if (string.IsNullOrEmpty(bookWithCategoriesVM.Book.ImgUrl))
+                    if (!string.IsNullOrEmpty(bookWithCategoriesVM.Book.ImgUrl))
                     {
                         //replace the file in the images folder
                         
