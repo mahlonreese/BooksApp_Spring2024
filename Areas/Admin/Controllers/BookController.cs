@@ -118,16 +118,51 @@ namespace BooksApp_Spring2024.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(int id, [Bind("BookId,BookTitle, Author, Description, ISBN, Price, ImgUrl, CategoryID")]Book bookobj)
+        public IActionResult Edit(BookWithCategoriesVM bookWithCategoriesVM, IFormFile? imgFile)
         {
+
+            string wwwRootPath = _environment.WebRootPath;
+
             if (ModelState.IsValid)
             {
-                _dbContext.Books.Update(bookobj);
+                if(imgFile != null)
+                {
+                    if (string.IsNullOrEmpty(bookWithCategoriesVM.Book.ImgUrl))
+                    {
+                        //replace the file in the images folder
+                        
+                        var oldImagePath = Path.Combine(wwwRootPath, bookWithCategoriesVM.Book.ImgUrl.TrimStart('\\'));
+
+                        if(System.IO.File.Exists(oldImagePath))
+                        {
+                            System.IO.File.Delete(oldImagePath);//deleting the existing file
+                        }
+
+
+
+                    }
+
+                    using (var fileStream = new FileStream(Path.Combine(wwwRootPath, @"images\bookImages\" + imgFile.FileName), FileMode.Create))
+                    {
+
+                        imgFile.CopyTo(fileStream); //saves the img file in the requested path/folder
+
+
+                    }
+
+                    //replacing the url in database
+                    bookWithCategoriesVM.Book.ImgUrl = @"\images\bookImages\" + imgFile.FileName;
+
+                }
+
+
+                _dbContext.Books.Update(bookWithCategoriesVM.Book);
                 _dbContext.SaveChanges();
 
                 return RedirectToAction("Index");
             }
-            return View(bookobj);
+            //if things dont go as expected, we return to the view with current model
+            return View(bookWithCategoriesVM);
         }
 
     }
