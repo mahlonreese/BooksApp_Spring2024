@@ -1,8 +1,10 @@
 ﻿using BooksApp_Spring2024.Data;
 using BooksApp_Spring2024.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace BooksApp_Spring2024.Areas.Customer.Controllers
 {
@@ -36,7 +38,31 @@ namespace BooksApp_Spring2024.Areas.Customer.Controllers
             //Along with the book, the category is loaded as well
             _dbContext.Entry(book).Reference(b => b.category).Load();
 
-            return View(book);
+            var cart = new Cart
+            {
+                BookId = id,
+                Book = book,
+
+                Quantity = 1
+
+            };
+
+            return View(cart);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult Details(Cart cart)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            cart.UserId = userId; //plugged in the userId into the cart object
+
+            _dbContext.Cart.Add(cart);//adding a new record into the cart DbSet
+
+            _dbContext.SaveChanges();
+
+            return RedirectToAction("Index");
+
         }
 
 

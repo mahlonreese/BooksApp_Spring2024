@@ -26,19 +26,23 @@
                     @Model.Book.Price
                 </p>
 
-                <div>
-                    @Model.Quantity
+                <div class="input-group mb-3">
+
+                    <span class="input-group-text">Quantity</span>
+
+                    <input asp-for="Quantity"/>
+                    
 
 
                 </div>
 
             </div>
 
-
+            <input type="submit" value="Add to Cart" class="btn btn-warning"/>
 
         </div>
 
-        <input type="submit" value="Add to Cart" />
+        
 
         <div>
 
