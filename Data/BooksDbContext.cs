@@ -20,6 +20,9 @@ namespace BooksApp_Spring2024.Data
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
+        //really a cart item not a cart
+        public DbSet<Cart> Cart { get; set; }
+
         //allows us to put in seed data    
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

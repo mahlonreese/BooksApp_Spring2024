@@ -28,6 +28,18 @@ namespace BooksApp_Spring2024.Areas.Customer.Controllers
             return View(books.ToList());
         }
 
+        public IActionResult Details(int id)
+        {
+
+            Book book = _dbContext.Books.Find(id);
+
+            //Along with the book, the category is loaded as well
+            _dbContext.Entry(book).Reference(b => b.category).Load();
+
+            return View(book);
+        }
+
+
         public IActionResult Privacy()
         {
             //returns the view related to the privacy view

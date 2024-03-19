@@ -16,20 +16,22 @@
                     <br />
                     @eachBook.Author
                     <br />
-                    @eachBook.Description
-                    <br />
+
                     @eachBook.Price
                     <br />
 
-                    <p>
-                        @eachBook.category.Name
-                    </p>
+                    @eachBook.category.Name
+
+
+                    <a asp-controller="Home" asp-action="Details" asp-route-id="@eachBook.BookId" class="btn btn-primary">Details</a>
 
                 </p>
+                
 
 
             </div>
 
+            
         
         </div>
 
