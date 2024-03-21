@@ -57,6 +57,24 @@ namespace BooksApp_Spring2024.Areas.Customer.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             cart.UserId = userId; //plugged in the userId into the cart object
 
+            Cart existingCart = _dbContext.Cart.FirstOrDefault(c => c.UserId == userId && c.BookId == cart.BookId);
+
+
+            if (existingCart != null) //if cart exists
+            {
+                //update existing row
+                existingCart.Quantity += cart.Quantity;
+
+                _dbContext.Cart.Update(existingCart);
+
+            }
+            else
+            {
+                _dbContext.Cart.Add(cart); //adding a new record into the cart
+
+            }
+            
+            
             _dbContext.Cart.Add(cart);//adding a new record into the cart DbSet
 
             _dbContext.SaveChanges();
