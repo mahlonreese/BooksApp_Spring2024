@@ -19,6 +19,8 @@ namespace BooksApp_Spring2024.Data
         public DbSet<Book> Books { get; set; } //adds the Books table to the database
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
 
         //really a cart item not a cart
         public DbSet<Cart> Cart { get; set; }

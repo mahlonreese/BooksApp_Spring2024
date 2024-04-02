@@ -17,5 +17,8 @@ namespace BooksApp_Spring2024.Models
 
         public int Quantity { get; set; }
 
+        [NotMapped]
+        public decimal SubTotal { get; set; }
+
     }
 }
