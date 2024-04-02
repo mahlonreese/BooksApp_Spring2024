@@ -12,6 +12,11 @@
             </div>
 
             <div class="col-6">
+
+                <div class="mb-2" text-start>
+                    Shipping Information:
+                </div>
+
                 <div class="form-floating mb-1">
                     <input asp-for="Order.Name" class="form-control" aria-required="true" placeholder="Name" />
                     <label asp-for="Order.Name">Name</label>
@@ -53,6 +58,10 @@
 
             <div class="col-6">
 
+                <div class="mb-2" text-start>
+                    Order Details:
+                </div>
+
                 <div class="border rounded">
 
                 
@@ -93,7 +102,7 @@
 
                 }
 
-                <div class="col-12 text-end">
+                <div class="card-footer bg-dark text-white col-12 text-end">
                     Order Total : @Model.Order.OrderTotal.ToString("c")
 
                 </div>
@@ -107,6 +116,15 @@
 
 
         </div>
+
+        <div class="card-footer">
+            <div class="text-end">
+                <button type="submit" class="btn btn-primary">Place Order</button>
+            </div>
+
+        </div>
+
+
     </div>
 
 

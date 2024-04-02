@@ -124,7 +124,84 @@ namespace BooksApp_Spring2024.Areas.Customer.Controllers
             shoppingCartVM.Order.Name = shoppingCartVM.Order.ApplicationUser.PostalCode;
 
 
+
             return View(shoppingCartVM);
+        }
+
+        [HttpPost]
+        [ActionName("ReviewOrder")]
+        public IActionResult ReviewOrderPOST(ShoppingCartVM shoppingCartVM)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var cartItemsList = _dbContext.Cart.Where(c => c.UserId == userId).Include(c => c.Book);
+
+            shoppingCartVM.CartItems = cartItemsList;
+
+            foreach (var cartItem in shoppingCartVM.CartItems)
+            {
+                cartItem.SubTotal = cartItem.Book.Price * cartItem.Quantity;
+
+                shoppingCartVM.Order.OrderTotal += cartItem.SubTotal;
+
+            }
+
+            shoppingCartVM.Order.ApplicationUser = _dbContext.ApplicationUsers.Find(userId);
+
+            shoppingCartVM.Order.Name = shoppingCartVM.Order.ApplicationUser.FullName;
+
+            shoppingCartVM.Order.Name = shoppingCartVM.Order.ApplicationUser.StreetAddress;
+
+            shoppingCartVM.Order.Name = shoppingCartVM.Order.ApplicationUser.City;
+
+            shoppingCartVM.Order.Name = shoppingCartVM.Order.ApplicationUser.State;
+
+            shoppingCartVM.Order.Name = shoppingCartVM.Order.ApplicationUser.PostalCode;
+
+
+
+            shoppingCartVM.Order.OrderDate = DateOnly.FromDateTime(DateTime.Now);
+
+            shoppingCartVM.Order.OrderStatus = "Pending";
+
+            shoppingCartVM.Order.PaymentStatus = "Pending";
+
+            _dbContext.Orders.Add(shoppingCartVM.Order); //adds a new order to the database
+            _dbContext.SaveChanges();
+
+            //adds each individual cart item as an order detail into the orderDetails table
+            foreach(var cartItem in shoppingCartVM.CartItems)
+            {
+                OrderDetail orderDetail = new()
+                {
+                    OrderId = shoppingCartVM.Order.OrderId,
+                    BookId = cartItem.BookId,
+                    Quantity = cartItem.Quantity,
+                    Price = cartItem.Book.Price,
+
+                 
+
+                };
+
+                _dbContext.OrderDetails.Add(orderDetail);
+
+            }
+
+            _dbContext.SaveChanges();
+
+            return RedirectToAction("OrderConfirmation", new {id = shoppingCartVM.Order.OrderId});
+
+        }
+
+        public IActionResult OrderConfirmation(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            List<Cart> userCartItems = _dbContext.Cart.ToList().Where(u => u.UserId ==userId).ToList();
+
+            _dbContext.Cart.RemoveRange(userCartItems);
+            _dbContext.SaveChanges();
+
+            return View(id);
         }
 
     }
