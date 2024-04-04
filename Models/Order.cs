@@ -18,9 +18,14 @@ namespace BooksApp_Spring2024.Models
         public string PostalCode { get; set; }
         public string Phone { get; set; }
         public DateOnly OrderDate { get; set; }
+
         public decimal OrderTotal { get; set; }
         public string OrderStatus { get; set; }
         public string PaymentStatus { get; set; }
+
+        public DateOnly? ShippingDate { get; set; }
+        public string? Carrier { get; set; }
+        public string? TrackingNumber { get; set; }
 
     }
 }
