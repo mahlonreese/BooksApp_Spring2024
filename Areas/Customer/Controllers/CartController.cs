@@ -123,7 +123,7 @@ namespace BooksApp_Spring2024.Areas.Customer.Controllers
 
             shoppingCartVM.Order.Name = shoppingCartVM.Order.ApplicationUser.PostalCode;
 
-            //shoppingCartVM.Order.Name = shoppingCartVM.Order.Phone;
+            shoppingCartVM.Order.Name = shoppingCartVM.Order.Phone;
 
             return View(shoppingCartVM);
         }
@@ -157,7 +157,7 @@ namespace BooksApp_Spring2024.Areas.Customer.Controllers
 
             shoppingCartVM.Order.Name = shoppingCartVM.Order.ApplicationUser.PostalCode;
 
-            //shoppingCartVM.Order.Name = shoppingCartVM.Order.Phone;
+            shoppingCartVM.Order.Name = shoppingCartVM.Order.Phone;
 
 
             shoppingCartVM.Order.OrderDate = DateOnly.FromDateTime(DateTime.Now);
