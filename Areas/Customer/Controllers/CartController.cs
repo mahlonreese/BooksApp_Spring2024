@@ -4,6 +4,8 @@ using BooksApp_Spring2024.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
+using Stripe.Checkout;
 using System.Security.Claims;
 
 namespace BooksApp_Spring2024.Areas.Customer.Controllers
@@ -189,7 +191,64 @@ namespace BooksApp_Spring2024.Areas.Customer.Controllers
 
             _dbContext.SaveChanges();
 
+            //StripeConfiguration.ApiKey = "sk_test_51P6upvB0jN1vlKlXa1dfOrho5JATbg1n6y6pZVc4BDArdXhVsxFkXrm4fDwHP7p7uQqyIXkLQEE4bKNvVvXMkk7Y004AY6ipnP";
+
+            var options = new Stripe.Checkout.SessionCreateOptions
+            {
+                SuccessUrl = "https://localhost:7206/" + $"customer/cart/OrderConfirmation/id={shoppingCartVM.Order.OrderId}",
+
+                CancelUrl = "https://localhost:7206/" + "customer/cart/index",
+
+                LineItems = new List<Stripe.Checkout.SessionLineItemOptions>(),
+
+                //{
+                //    new Stripe.Checkout.SessionLineItemOptions
+                //    {
+                //         Price = "price_1MotwRLkdIwHu7ixYcPLm5uZ",
+                //         Quantity = 2,
+                //    },
+                //},
+                Mode = "payment",
+            };
+
+            foreach(var cartItem in shoppingCartVM.CartItems)
+            {
+                var sessionLineItem = new SessionListLineItemsOptions
+                {
+                    PriceData = new SessionLineItemOptions
+                    {
+                        UnitAmount = (long) cartItem.Book.Price
+                    }
+
+                }
+
+
+            }
+
+            var service = new Stripe.Checkout.SessionService();
+            service.Create(options);
+
+
             return RedirectToAction("OrderConfirmation", new {id = shoppingCartVM.Order.OrderId});
+
+        }
+
+        public void UpdatePaymentStatus(int orderID, string sessionID, string paymentIntentID)
+        {
+            Order order = _dbContext.Orders.Find(orderID);
+
+            if (!string.IsNullOrEmpty(sessionID))
+            {
+                order.SessionID = sessionID;
+
+            }
+            if(!string.IsNullOrEmpty(paymentIntentID))
+            {
+                order.PaymentIntentID = paymentIntentID;
+                order.PaymentStatus = "Approved";
+            }
+
+
 
         }
 
