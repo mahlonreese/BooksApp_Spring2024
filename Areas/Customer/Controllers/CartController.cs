@@ -195,7 +195,7 @@ namespace BooksApp_Spring2024.Areas.Customer.Controllers
 
             var options = new Stripe.Checkout.SessionCreateOptions
             {
-                SuccessUrl = "https://localhost:7206/" + $"customer/cart/OrderConfirmation/id={shoppingCartVM.Order.OrderId}",
+                SuccessUrl = "https://localhost:7206/" + $"customer/cart/OrderConfirmation?id={shoppingCartVM.Order.OrderId}",
 
                 CancelUrl = "https://localhost:7206/" + "customer/cart/index",
 
@@ -211,50 +211,77 @@ namespace BooksApp_Spring2024.Areas.Customer.Controllers
                 Mode = "payment",
             };
 
-            foreach(var cartItem in shoppingCartVM.CartItems)
-            {
-                var sessionLineItem = new SessionListLineItemsOptions
-                {
-                    PriceData = new SessionLineItemOptions
-                    {
-                        UnitAmount = (long) cartItem.Book.Price
-                    }
+            //foreach(var cartItem in shoppingCartVM.CartItems)
+            //{
+            //    var sessionLineItem = new SessionListLineItemsOptions
+            //    {
+            //        PriceData = new SessionLineItemPriceDataOptions
+            //        {
+            //            UnitAmount = (long)(cartItem.Book.Price * 100),
+            //            Currency = "usd",
+            //            ProductData = new SessionLineItemPriceDataProductDataOptions
+            //            {
+            //                Name = cartItem.Book.BookTitle
+            //            }
+            //        },
+            //        Quantity = cartItem.Quantity
 
-                }
+            //    };
+
+            //    options.LineItems.Add(sessionLineItem)
 
 
-            }
+            //}
 
-            var service = new Stripe.Checkout.SessionService();
-            service.Create(options);
+            //var service = new Stripe.Checkout.SessionService();
+            //Session session = service.Create(options);
 
+            //shoppingCartVM.Order.SessionID = session.Id;
+            //_dbContext.SaveChanges();
+
+            //Response.Headers.Add
 
             return RedirectToAction("OrderConfirmation", new {id = shoppingCartVM.Order.OrderId});
 
         }
 
-        public void UpdatePaymentStatus(int orderID, string sessionID, string paymentIntentID)
-        {
-            Order order = _dbContext.Orders.Find(orderID);
+        //public void UpdatePaymentStatus(int orderID, string sessionID, string paymentIntentID)
+        //{
+        //    Order order = _dbContext.Orders.Find(orderID);
 
-            if (!string.IsNullOrEmpty(sessionID))
-            {
-                order.SessionID = sessionID;
+        //    if (!string.IsNullOrEmpty(sessionID))
+        //    {
+        //        order.SessionID = sessionID;
 
-            }
-            if(!string.IsNullOrEmpty(paymentIntentID))
-            {
-                order.PaymentIntentID = paymentIntentID;
-                order.PaymentStatus = "Approved";
-            }
+        //    }
+        //    if(!string.IsNullOrEmpty(paymentIntentID))
+        //    {
+        //        order.PaymentIntentID = paymentIntentID;
+        //        order.PaymentStatus = "Approved";
+        //    }
 
 
 
-        }
+        //}
 
         public IActionResult OrderConfirmation(int id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            Order order = _dbContext.Orders.Find(id);
+
+            var sessID = order.SessionID;
+
+            var service = new SessionService();
+
+            Session session = service.Get(sessID);
+
+            if(session.PaymentStatus.ToLower() == "paid")
+            {
+                order.PaymentIntentID = session.PaymentIntentId;
+
+                order.PaymentStatus = "Approved";
+            }
 
             List<Cart> userCartItems = _dbContext.Cart.ToList().Where(u => u.UserId ==userId).ToList();
 
