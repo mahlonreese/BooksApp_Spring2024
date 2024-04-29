@@ -95,11 +95,11 @@ namespace BooksApp_Spring2024.Areas.Identity.Pages.Account
             [Display(Name = "Password")]
             public string Password { get; set; }
 
-            public string FullName { get; set; }
-            public string StreetAddress { get; set; }
-            public string City { get; set; }
-            public string PostalCode { get; set; }
-            public string State { get; set; }
+            //public string FullName { get; set; }
+            //public string StreetAddress { get; set; }
+            //public string City { get; set; }
+            //public string PostalCode { get; set; }
+            //public string State { get; set; }
 
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -140,11 +140,11 @@ namespace BooksApp_Spring2024.Areas.Identity.Pages.Account
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
-                user.FullName = Input.FullName;
-                user.StreetAddress = Input.StreetAddress;
-                user.City = Input.City;
-                user.PostalCode = Input.PostalCode;
-                user.State = Input.State;
+                //user.FullName = Input.FullName;
+                //user.StreetAddress = Input.StreetAddress;
+                //user.City = Input.City;
+                //user.PostalCode = Input.PostalCode;
+                //user.State = Input.State;
 
                 if (result.Succeeded)//if user was created successfully
                 {

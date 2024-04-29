@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BooksApp_Spring2024
 {
@@ -14,5 +15,8 @@ namespace BooksApp_Spring2024
         public string? PostalCode { get; set; }
 
         public string? State { get; set; }
+
+        [NotMapped]
+        public string? RoleName { get; set; }
     }
 }

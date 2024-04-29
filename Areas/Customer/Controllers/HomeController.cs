@@ -1,8 +1,10 @@
 ﻿using BooksApp_Spring2024.Data;
 using BooksApp_Spring2024.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace BooksApp_Spring2024.Areas.Customer.Controllers
 {
@@ -27,6 +29,60 @@ namespace BooksApp_Spring2024.Areas.Customer.Controllers
 
             return View(books.ToList());
         }
+
+        public IActionResult Details(int id)
+        {
+
+            Book book = _dbContext.Books.Find(id);
+
+            //Along with the book, the category is loaded as well
+            _dbContext.Entry(book).Reference(b => b.category).Load();
+
+            var cart = new Cart
+            {
+                BookId = id,
+                Book = book,
+
+                Quantity = 1
+
+            };
+
+            return View(cart);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult Details(Cart cart)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            cart.UserId = userId; //plugged in the userId into the cart object
+
+            Cart existingCart = _dbContext.Cart.FirstOrDefault(c => c.UserId == userId && c.BookId == cart.BookId);
+
+
+            if (existingCart != null) //if cart exists
+            {
+                //update existing row
+                existingCart.Quantity += cart.Quantity;
+
+                _dbContext.Cart.Update(existingCart);
+
+            }
+            else
+            {
+                _dbContext.Cart.Add(cart); //adding a new record into the cart
+
+            }
+            
+            
+            _dbContext.Cart.Add(cart);//adding a new record into the cart DbSet
+
+            _dbContext.SaveChanges();
+
+            return RedirectToAction("Index");
+
+        }
+
 
         public IActionResult Privacy()
         {
