@@ -201,17 +201,21 @@ namespace BooksApp_Spring2024.Areas.Customer.Controllers
 
                 LineItems = new List<Stripe.Checkout.SessionLineItemOptions>(),
 
+                // I followed the in class example but I was still getting errors in this area
+
                 //{
                 //    new Stripe.Checkout.SessionLineItemOptions
                 //    {
-                //         Price = "price_1MotwRLkdIwHu7ixYcPLm5uZ",
-                //         Quantity = 2,
+                //        Price = "price_1MotwRLkdIwHu7ixYcPLm5uZ",
+                //        Quantity = 2,
                 //    },
                 //},
                 Mode = "payment",
             };
 
-            //foreach(var cartItem in shoppingCartVM.CartItems)
+            // I followed the in class example but I was still getting errors in this area
+
+            //foreach (var cartItem in shoppingCartVM.CartItems)
             //{
             //    var sessionLineItem = new SessionListLineItemsOptions
             //    {
@@ -245,24 +249,24 @@ namespace BooksApp_Spring2024.Areas.Customer.Controllers
 
         }
 
-        //public void UpdatePaymentStatus(int orderID, string sessionID, string paymentIntentID)
-        //{
-        //    Order order = _dbContext.Orders.Find(orderID);
+        public void UpdatePaymentStatus(int orderID, string sessionID, string paymentIntentID)
+        {
+            Order order = _dbContext.Orders.Find(orderID);
 
-        //    if (!string.IsNullOrEmpty(sessionID))
-        //    {
-        //        order.SessionID = sessionID;
+            if (!string.IsNullOrEmpty(sessionID))
+            {
+                order.SessionID = sessionID;
 
-        //    }
-        //    if(!string.IsNullOrEmpty(paymentIntentID))
-        //    {
-        //        order.PaymentIntentID = paymentIntentID;
-        //        order.PaymentStatus = "Approved";
-        //    }
+            }
+            if (!string.IsNullOrEmpty(paymentIntentID))
+            {
+                order.PaymentIntentID = paymentIntentID;
+                order.PaymentStatus = "Approved";
+            }
 
 
 
-        //}
+        }
 
         public IActionResult OrderConfirmation(int id)
         {
